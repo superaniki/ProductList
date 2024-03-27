@@ -5,7 +5,7 @@ class ProductManager
   public Product? MarkedProduct { set; get; }
   private List<Product> productList = [];
   public enum ResponseCode { Success, Error, Quit };
-  public enum Command { NewProduct, Search, Quit };
+  public enum Command { NewProduct, Search, Quit, None };
   public ResponseCode SearchForProduct(out Product? product)
   {
     Console.Clear();
@@ -104,15 +104,19 @@ class ProductManager
     Console.WriteLine("Product list");
     Console.ForegroundColor = ConsoleColor.Blue;
     Console.WriteLine("-------------------------------------------");
+    Console.ResetColor();
 
     var sortedList = productList.OrderBy(product => product.Price).ToList();
     foreach (Product product in sortedList)
     {
       if (product == MarkedProduct)
+      {
+        Console.BackgroundColor = ConsoleColor.DarkMagenta;
         Console.ForegroundColor = ConsoleColor.Yellow;
-      else
-        Console.ForegroundColor = ConsoleColor.White;
-      Console.WriteLine($"{product.ProductName.PadRight(15)} {product.Category.PadRight(15)} {product.Price}");
+      }
+
+      Console.WriteLine($"{product.ProductName.PadRight(15)} {product.Category.PadRight(15)} {product.Price}".PadRight(10));
+      Console.ResetColor();
     }
     int sum = productList.Sum(product => product.Price);
     Console.ForegroundColor = ConsoleColor.Blue;
@@ -137,6 +141,8 @@ class ProductManager
       return Command.NewProduct;
     if (choice == "s")
       return Command.Search;
-    return Command.Quit;
+    if (choice == "q")
+      return Command.Quit;
+    return Command.None;
   }
 }
